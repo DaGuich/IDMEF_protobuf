@@ -1,0 +1,394 @@
+syntax="proto3";
+
+message IDMEFMessage {
+    Alert alert = 1;
+    Heartbeat hearbeat = 2;
+}
+
+message CreateTime {
+    string time = 1;
+}
+
+message Alert {
+    string messageid = 1;
+    OverflowAlert overflow_alert = 2;
+    ToolAlert tool_alert = 3;
+    CorrelationAlert correlation_alert = 4;
+    Analyzer analyzer = 5;
+    repeated Source source = 6;
+    repeated Target target = 7;
+    CreateTime createTime = 8;
+    Classification classification = 9;
+    DetectTime DetectTime = 10;
+    AnalyzerTime analyzerTime = 11;
+    Assesment assesment = 12;
+    repeated AdditionalData additionalData = 13;
+}
+
+message OverflowAlert {
+    string program = 1;
+    int64 size = 2;
+    bytes buffer = 3;
+}
+
+message ToolAlert {
+    string name = 1;
+    string command = 2;
+    string alertident = 3;
+}
+
+message CorrelationAlert {
+    string name = 1;
+    string alertident = 2;
+}
+
+message Analyzer {
+    string analyzerid = 1;
+    string name = 2;
+    string manufacturer = 3;
+    string model = 4;
+    string version = 5;
+    string class = 6;
+    string ostype = 7;
+    string osversion = 8;
+
+    Analyzer analyzer = 9;
+    Node node = 10;
+    Process process = 11;
+
+}
+
+message Classification {
+    string ident = 1;
+    string text = 2;    
+    repeated Reference reference = 3;
+}
+
+message Reference {
+    enum Origin {
+        unknown = 0;
+        vendorSpecific = 1;
+        userSpecific = 2;
+        bugtraqid = 3;
+        cve = 4;
+        osvdb = 5;
+    }
+
+    string name = 1;
+    string url = 2;
+    Origin origin = 3;
+    string meaning = 4;
+}
+
+message DetectTime {
+    string time = 1;
+}
+
+message AnalyzerTime {
+    string time = 2;
+}
+
+message Source {
+    enum Spoofed {
+        unknown = 0;
+        yes = 1;
+        no = 2;
+    }
+
+    string ident = 1;
+    Spoofed spoofed = 2;
+    string interface = 3;
+    Node node = 4;
+    User user = 5;
+    Process process = 6;
+    Service service = 7;
+}
+
+message Target {
+    enum Decoy {
+        unknown = 0;
+        yes = 1;
+        no = 2;
+    } 
+
+    string ident = 1;
+    Decoy decoy = 2;
+    string interface = 3;
+    Node node = 4;
+    User user = 5;
+    Process process = 6;
+    Service service = 7;
+    File file = 8;
+}
+
+message Assesment {
+    Impact impact = 1;
+    repeated Action action = 2;
+    Confidence confidence = 3;
+}
+
+message Impact {
+    enum Severity {
+        info = 0;
+        low = 1;
+        medium = 2;
+        high = 3;
+    }
+
+    enum Completion {
+        failed = 0;
+        succeeded = 1;
+    }
+
+    enum Type {
+        admin = 0;
+        dos = 1;
+        file = 2;
+        recon = 3;
+        user = 4;
+        other = 5;
+    }
+
+    Severity severity = 1;
+    Completion completion = 2;
+    Type type = 3; 
+}
+
+message Action {
+    enum Category {
+        blockInstalled = 0;
+        notificationSent = 1;
+        takenOffline = 2;
+        other = 3;
+    }
+
+    Category category = 1;
+}
+
+message Confidence {
+    enum Rating {
+        low = 0;
+        medium = 1;
+        high = 2;
+        numeric = 3;
+    }
+
+    Rating rating = 1;
+}
+
+message AdditionalData {
+    string meaning = 1;
+}
+
+message Node {
+    enum Category {
+        unknown = 0;
+        ads = 1;
+        afs = 2;
+        coda = 3;
+        dfs = 4;
+        dns = 5;
+        hosts = 6;
+        kerberos = 7;
+        nds = 8;
+        nis = 9;
+        nisplus = 10;
+        nt = 11;
+        wfw = 12;
+    }
+
+    string location = 1;
+    string name = 2;
+    string ident = 3;
+    Category category = 4;
+    repeated Address address = 5;
+}
+
+message Process {
+    string name = 1;
+    int64 pid = 2;
+    string path = 3;
+    repeated string arg = 4;
+    repeated string env = 5;
+    string ident = 6;
+}
+
+message Address {
+    enum Category {
+        unknow = 0;
+        atm = 1;
+        eMail = 2;
+        lotusNodes=3;
+        mac = 4;
+        sna = 5;
+        vm = 6;
+        ipv4Addr = 7;
+        ipv4AddrHex = 8;
+        ipv4Net = 9;
+        ipv4NetMask = 10;
+        ipv6Addr = 11;
+        ipv6AddrHex = 12;
+        ipv6Net = 13;
+        ipv6NetMask = 14;
+    }
+
+    string address = 1;
+    string netmask = 2;
+    string ident = 3;
+    Category category = 4;
+    string vlanName = 5;
+    int64 vlanNum = 6;
+}
+
+message User {
+    enum Category {
+        unknown = 0;
+        application = 1;
+        osDevice = 2;
+    }
+
+    string ident = 1;
+    Category category = 2;
+    repeated UserID userId = 3;
+}
+
+message UserID {
+    enum Type {
+        currentUser = 0;
+        originalUser = 1;
+        targetUser = 2;
+        userPrivs = 3;
+        currentGroup = 4;
+        groupPrivs = 5;
+        otherPrivs = 6;
+    }
+
+    string name = 1;
+    int64 number = 2;
+    string ident = 3;
+    Type type = 4;
+    string tty = 5;
+}
+
+message Service {
+    message WebService {
+        string url = 1;
+        string cgi = 2;
+        string httpMethod = 3;
+        repeated string arg = 4;
+    }
+
+    message SNMPService {
+        string oid = 1;
+        int64 messageProcessingModel = 2;
+        int64 securityModel = 3;
+        string securityName = 4;
+        int64 securityLevel = 5;
+        string contextName = 6;
+        string contextEngineID = 7;
+        string command = 8;
+    }
+
+    string name = 1;
+    int64 port = 2;
+    string portlist = 3;
+    string protocol = 4;
+    string ident = 5;
+    int64 ipVersion = 6;
+    int64 ianaProtocolNumber = 7;
+    int64 ianaProtocolName = 8;
+    WebService webService = 9;
+    SNMPService snmpService = 10;
+}
+
+message File {
+    enum Category {
+        current = 0;
+        original = 1;
+    }
+
+    string name = 1;
+    string path = 2;
+    string createTime = 3;
+    string modifyTime = 4;
+    string accessTime = 5;
+    int64 dataSize = 6;
+    int64 diskSize = 7;
+    string ident = 8;
+    Category category = 9;
+    string fileType = 10;
+
+    repeated FileAccess fileAccess = 11;
+    repeated Linkage linkage = 12;
+    Inode inode = 13; 
+    repeated Checksum checksum = 14;
+}
+
+message FileAccess {
+    enum Permission {
+        noAccess = 0;
+        read = 1;
+        write = 2;
+        execute = 3;
+        search = 4;
+        delete = 5;
+        executeAs = 6;
+        changePermissions = 7;
+        takeOwnership = 8;
+    }
+
+    repeated Permission permission = 1;
+    UserID userId = 2;
+}
+
+message Linkage {
+    enum Category {
+        hardLink = 0;
+        mountPoint = 1;
+        reparsePoint = 2;
+        shortcut = 3;
+        stream = 4;
+        symbolicLink = 5;
+    }
+
+    string name = 1;
+    string path = 2;
+    Category category = 3;
+    File file = 4;
+}
+
+message Inode {
+    string changeTime = 1;
+    int64 number = 2;
+    int64 majorDevice = 3;
+    int64 minorDevice = 4;
+    int64 cMajorDevice = 5;
+    int64 cMinorDevice = 6;
+}
+
+message Checksum {
+    enum Algorithm {
+        md4 = 0;
+        md5 = 1;
+        sha1 = 2;
+        sha2256 = 3;
+        sha2384 = 4;
+        sha2512 = 5;
+        crc32 = 6;
+        haval = 7;
+        tiger = 8;
+        gost = 9;
+    }
+    string value = 1;
+    string key = 2;
+    Algorithm algorithm = 3;
+}
+
+message Heartbeat {
+    int64 heartbeatInterval = 1;
+    string messageid = 2;
+    Analyzer analyzer = 3;
+    CreateTime createTime = 4;
+    AnalyzerTime analyzerTime = 5;
+    repeated AdditionalData additionalData = 6;
+}
